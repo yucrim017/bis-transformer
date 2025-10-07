@@ -1,0 +1,22 @@
+epochs: 30
+batch_size: 32
+
+optimizer:
+  name: "sgd"
+  lr: 3e-4
+  weight_decay: 1e-2
+  momentum: 0.9
+  nesterov: true
+
+scheduler:
+  name: "cosine"
+  epochs: 30
+  min_lr: 1e-6
+
+amp: true
+patience: 8
+grad_clip_norm: 1.0
+
+ckpt:
+  dir: "outputs/checkpoints"
+  filename: "best.pth"

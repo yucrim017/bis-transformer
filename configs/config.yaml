@@ -1,0 +1,15 @@
+defaults:
+  - prepare: config
+  - data: base
+  - model: transformer
+  - train: base
+  - mlflow: local
+  - _self_
+
+predict:
+  case_dir: "data/processed/v1/cid_000123"
+  output_dir: "outputs/predict"
+
+explain:
+  case_dir: "data/processed/v1/cid_000123"
+  output_dir: "outputs/explain"
