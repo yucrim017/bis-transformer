@@ -1,9 +1,10 @@
-epochs: 30
-batch_size: 32
+epochs: 50
+batch_size: 64
+eval_interval: 5
 
 optimizer:
   name: "sgd"
-  lr: 3e-4
+  lr: 1e-3
   weight_decay: 1e-2
   momentum: 0.9
   nesterov: true
@@ -19,4 +20,5 @@ grad_clip_norm: 1.0
 
 ckpt:
   dir: "outputs/checkpoints"
-  filename: "best.pth"
+  best: "best.pt"
+  last: "last.pt"

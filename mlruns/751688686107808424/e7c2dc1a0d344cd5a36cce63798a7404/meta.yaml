@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/htky2413/Code/repos/bis-transformer/mlruns/751688686107808424/e7c2dc1a0d344cd5a36cce63798a7404/artifacts
+end_time: 1759884406243
+entry_point_name: ''
+experiment_id: '751688686107808424'
+lifecycle_stage: active
+run_id: e7c2dc1a0d344cd5a36cce63798a7404
+run_name: auspicious-flea-103
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1759880822023
+status: 4
+tags: []
+user_id: htky2413

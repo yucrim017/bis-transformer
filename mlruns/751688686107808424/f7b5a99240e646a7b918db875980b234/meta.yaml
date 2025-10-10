@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/htky2413/Code/repos/bis-transformer/mlruns/751688686107808424/f7b5a99240e646a7b918db875980b234/artifacts
+end_time: 1760059267375
+entry_point_name: ''
+experiment_id: '751688686107808424'
+lifecycle_stage: active
+run_id: f7b5a99240e646a7b918db875980b234
+run_name: rogue-mule-633
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1760059267363
+status: 4
+tags: []
+user_id: unknown

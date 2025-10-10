@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import List, Dict, Any
-import json
 
 import numpy as np
 import pandas as pd
@@ -10,49 +9,12 @@ import vitaldb as vdb
 import hydra
 from omegaconf import DictConfig, OmegaConf
 
-from bistransformer.data.preprocess import (
-    extract_1hz_features
+from bistransformer.utils.data import (
+    extract_1hz_features,
+    build_tracks_from_cfg,
+    columns_for_features,
+    save_case_npz,
 )
-
-def _ensure_list(x: Any) -> List[Any]:
-    """ensure x is a list"""
-    if x is None:
-        return []
-    if isinstance(x, str):
-        return list(x)
-    return x
-
-def build_tracks_from_cfg(cfg_data) -> list[str]:
-    """build tracks from config column names"""
-    all_tracks = []
-    for k in ["bis", "sqi", "emg", "eeg", "vital", "drug"]:
-        val = cfg_data.cols.get(k, [])
-        if val is None:
-            continue
-        if isinstance(val, str):
-            all_tracks.append(val)
-        else:
-            # Handle lists and OmegaConf ListConfig
-            try:
-                all_tracks.extend(list(val))
-            except (TypeError, ValueError):
-                pass
-    return sorted(set(all_tracks))
-
-def _columns_for_features(df_feat: pd.DataFrame, bis_col: str) -> List[str]:
-    """extract columns for features"""
-    exclude = {"sec", "BIS_target", bis_col}
-    return [c for c in df_feat.columns if c not in exclude]
-
-def _save_npz(path: Path, **arrays: np.ndarray) -> None:
-    """save arrays to npz file"""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    for k, v in arrays.items():
-        if isinstance(v, (dict, list, tuple)):
-            arrays[k] = \
-                np.array([json.dumps(v, ensure_ascii=False)], dtype=object)
-    np.savez_compressed(path, **arrays)
-
 
 # ----------------------------
 # case processing
@@ -118,7 +80,7 @@ def process_case(
 
     # --- process: df_feat -> X, y, T ---
     bis_col = cols["bis"]
-    feat_cols = _columns_for_features(df_feat, bis_col=bis_col)
+    feat_cols = columns_for_features(df_feat, bis_col=bis_col)
 
     df_feat = df_feat.sort_values("sec").reset_index(drop=True)
 
@@ -144,7 +106,7 @@ def process_case(
         bis_column=str(bis_col),
         )
     if save_npz:
-        _save_npz(out_dir / "features.npz", X=X, y=y, sec=T, META=meta)
+        save_case_npz(out_dir / "features.npz", X=X, y=y, sec=T, META=meta)
     if save_parquet:
         df_feat.to_parquet(out_dir / "table.parquet", index=False)
     if verbose:

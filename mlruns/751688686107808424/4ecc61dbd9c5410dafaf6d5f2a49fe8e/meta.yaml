@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/htky2413/Code/repos/bis-transformer/mlruns/751688686107808424/4ecc61dbd9c5410dafaf6d5f2a49fe8e/artifacts
+end_time: 1760063248663
+entry_point_name: ''
+experiment_id: '751688686107808424'
+lifecycle_stage: active
+run_id: 4ecc61dbd9c5410dafaf6d5f2a49fe8e
+run_name: rogue-fowl-723
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1760061385727
+status: 4
+tags: []
+user_id: unknown

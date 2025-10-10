@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/htky2413/Code/repos/bis-transformer/mlruns/751688686107808424/0f06243a47414a0f946de3e20204f6a3/artifacts
+end_time: 1759898906960
+entry_point_name: ''
+experiment_id: '751688686107808424'
+lifecycle_stage: active
+run_id: 0f06243a47414a0f946de3e20204f6a3
+run_name: upbeat-yak-58
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1759896375731
+status: 4
+tags: []
+user_id: htky2413

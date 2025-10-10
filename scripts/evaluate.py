@@ -5,17 +5,23 @@ import mlflow
 import hydra
 from omegaconf import DictConfig, OmegaConf
 
-from bistransformer.data.datamodule import build_dataloaders
-from bistransformer.models.factory import build_model
-from bistransformer.training.loop import _device, _eval_epoch
-
+from bistransformer.dataset import build_dataloaders
+from bistransformer.models import build_model
+from bistransformer.eval import evaluate
 
 @hydra.main(version_base=None, config_path="../configs", config_name="config")
 def main(cfg: DictConfig):
     mlflow.set_tracking_uri(cfg.mlflow.tracking_uri)
     mlflow.set_experiment(cfg.mlflow.experiment_name)
+    mlflow.set_tag("mode", "evaluate")
+    mlflow.set_tag("train", mlflow.active_run().info.run_id)
 
-    device = _device()
+    device = torch.device(
+        "cuda" if torch.cuda.is_available() \
+        else "mps" if torch.backends.mps.is_available() \
+        else "cpu"
+    )
+
     _, _, test_loader = build_dataloaders(cfg)
     model = build_model(cfg.model).to(device)
 

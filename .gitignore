@@ -1,5 +1,7 @@
-*.pyc
+.venv/
 configs/**/test_**.yaml/
 notebooks/
 outputs/
 data/
+test/
+**/__pycache__/

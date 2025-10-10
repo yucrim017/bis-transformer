@@ -1,0 +1,1 @@
+{'bis': 'BIS/BIS', 'sqi': 'BIS/SQI', 'emg': 'BIS/EMG', 'eeg': ['BIS/EEG1_WAV', 'BIS/EEG2_WAV'], 'vital': ['Solar8000/ART_SBP', 'Solar8000/ART_DBP', 'Solar8000/PLETH_HR', 'Solar8000/RR_CO2', 'Solar8000/BT'], 'drug': ['Orchestra/PPF20_RATE']}

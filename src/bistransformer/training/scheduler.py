@@ -14,8 +14,7 @@ def build_scheduler(optimizer: torch.optim.Optimizer, cfg):
             optimizer,
             mode=str(getattr(cfg.train.scheduler, "mode", "min")),
             factor=float(getattr(cfg.train.scheduler, "factor", 0.1)),
-            patience=int(getattr(cfg.train.scheduler, "lr_patience", 3)),
-            factor=float(getattr(cfg.train.scheduler, "lr_factor", 0.5))
+            patience=int(getattr(cfg.train.scheduler, "lr_patience", 3))
         )
     else:
         return torch.optim.lr_scheduler.LambdaLR(

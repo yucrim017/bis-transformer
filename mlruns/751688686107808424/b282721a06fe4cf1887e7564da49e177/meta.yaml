@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/htky2413/Code/repos/bis-transformer/mlruns/751688686107808424/b282721a06fe4cf1887e7564da49e177/artifacts
+end_time: 1759898953590
+entry_point_name: ''
+experiment_id: '751688686107808424'
+lifecycle_stage: active
+run_id: b282721a06fe4cf1887e7564da49e177
+run_name: respected-smelt-718
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1759898922941
+status: 4
+tags: []
+user_id: htky2413

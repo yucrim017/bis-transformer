@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/htky2413/Code/repos/bis-transformer/mlruns/751688686107808424/50422862ee694176a4e1c37fc91850a0/artifacts
+end_time: 1760059632448
+entry_point_name: ''
+experiment_id: '751688686107808424'
+lifecycle_stage: active
+run_id: 50422862ee694176a4e1c37fc91850a0
+run_name: fearless-pug-869
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1760059600291
+status: 4
+tags: []
+user_id: unknown

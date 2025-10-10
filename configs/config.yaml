@@ -7,9 +7,19 @@ defaults:
   - _self_
 
 predict:
+  model:
+    path: "outputs/checkpoints/best.pt"
+  window:
+    length: 120
+    hop: 4
   case_dir: "data/processed/v1/cid_000123"
   output_dir: "outputs/predict"
 
 explain:
+  model:
+    path: null
+  window:
+    length: 120
+    hop: 4
   case_dir: "data/processed/v1/cid_000123"
   output_dir: "outputs/explain"

@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/htky2413/Code/repos/bis-transformer/mlruns/751688686107808424/9c45b9fc827d474fa5933c9950c5b820/artifacts
+end_time: 1760059862337
+entry_point_name: ''
+experiment_id: '751688686107808424'
+lifecycle_stage: active
+run_id: 9c45b9fc827d474fa5933c9950c5b820
+run_name: defiant-yak-788
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1760059835295
+status: 4
+tags: []
+user_id: unknown

@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/htky2413/Code/repos/bis-transformer/mlruns/751688686107808424/63e99ee9d789486cabf09d41646dd0e9/artifacts
+end_time: 1760059247365
+entry_point_name: ''
+experiment_id: '751688686107808424'
+lifecycle_stage: active
+run_id: 63e99ee9d789486cabf09d41646dd0e9
+run_name: angry-lamb-443
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1760059247354
+status: 4
+tags: []
+user_id: unknown

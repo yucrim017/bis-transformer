@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/htky2413/Code/repos/bis-transformer/mlruns/751688686107808424/c4b28656d08a41e8b3601769db8a7d40/artifacts
+end_time: 1759893978155
+entry_point_name: ''
+experiment_id: '751688686107808424'
+lifecycle_stage: active
+run_id: c4b28656d08a41e8b3601769db8a7d40
+run_name: skillful-turtle-789
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1759893978144
+status: 4
+tags: []
+user_id: htky2413

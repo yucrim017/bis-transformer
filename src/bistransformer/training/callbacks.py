@@ -1,6 +1,5 @@
 import os
 from dataclasses import dataclass
-
 @dataclass
 class EarlyStopping:
     monitor: str = "val/mae"
@@ -25,9 +24,12 @@ class CheckpointSaver:
         self.dirpath = dirpath
         self.filename = filename
         os.makedirs(dirpath, exist_ok=True)
-        self.best_path = os.path.join(self.dirpath, self.filename)
+        self.ckpt_path = os.path.join(self.dirpath, self.filename)
 
-    def save(self, model_state_dict: dict):
+    def save(self, model: dict):
+        """
+        Save model state dictionary or other objects to checkpoint file.
+        """
         import torch
-        torch.save(model_state_dict, self.best_path)
-        return self.best_path
+        torch.save(model, self.ckpt_path)
+        return self.ckpt_path

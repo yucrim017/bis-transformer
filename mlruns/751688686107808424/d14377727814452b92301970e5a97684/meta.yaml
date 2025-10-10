@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/htky2413/Code/repos/bis-transformer/mlruns/751688686107808424/d14377727814452b92301970e5a97684/artifacts
+end_time: 1760061310820
+entry_point_name: ''
+experiment_id: '751688686107808424'
+lifecycle_stage: active
+run_id: d14377727814452b92301970e5a97684
+run_name: blushing-colt-970
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1760060455623
+status: 4
+tags: []
+user_id: unknown

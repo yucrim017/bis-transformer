@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/htky2413/Code/repos/bis-transformer/mlruns/751688686107808424/4b3863b27f644172bbe9fdab338be462/artifacts
+end_time: 1760059200151
+entry_point_name: ''
+experiment_id: '751688686107808424'
+lifecycle_stage: active
+run_id: 4b3863b27f644172bbe9fdab338be462
+run_name: stately-gnat-821
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1760059200140
+status: 4
+tags: []
+user_id: unknown

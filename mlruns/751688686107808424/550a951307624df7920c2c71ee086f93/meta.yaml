@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/htky2413/Code/repos/bis-transformer/mlruns/751688686107808424/550a951307624df7920c2c71ee086f93/artifacts
+deleted_time: 1759823682721
+end_time: 1759813528174
+entry_point_name: ''
+experiment_id: '751688686107808424'
+lifecycle_stage: deleted
+run_id: 550a951307624df7920c2c71ee086f93
+run_name: masked-whale-298
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1759813505267
+status: 4
+tags: []
+user_id: htky2413

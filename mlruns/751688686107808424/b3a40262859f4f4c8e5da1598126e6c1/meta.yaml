@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/htky2413/Code/repos/bis-transformer/mlruns/751688686107808424/b3a40262859f4f4c8e5da1598126e6c1/artifacts
+end_time: 1759896349409
+entry_point_name: ''
+experiment_id: '751688686107808424'
+lifecycle_stage: active
+run_id: b3a40262859f4f4c8e5da1598126e6c1
+run_name: mercurial-rat-643
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1759894262118
+status: 4
+tags: []
+user_id: htky2413

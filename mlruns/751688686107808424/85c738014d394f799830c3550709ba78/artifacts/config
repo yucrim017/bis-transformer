@@ -1,0 +1,185 @@
+{
+  "prepare": {
+    "data": {
+      "cols": {
+        "bis": "BIS/BIS",
+        "sqi": "BIS/SQI",
+        "emg": "BIS/EMG",
+        "eeg": [
+          "BIS/EEG1_WAV",
+          "BIS/EEG2_WAV"
+        ],
+        "vital": [
+          "Solar8000/ART_SBP",
+          "Solar8000/ART_DBP",
+          "Solar8000/PLETH_HR",
+          "Solar8000/RR_CO2",
+          "Solar8000/BT"
+        ],
+        "drug": [
+          "Orchestra/PPF20_RATE"
+        ]
+      }
+    },
+    "prepare": {
+      "io": {
+        "output_dir": "data/processed/v1"
+      },
+      "id": {
+        "cids": [],
+        "n_cases": 100
+      },
+      "runtime": {
+        "verbose": true,
+        "save_npz": true,
+        "save_parquet": false
+      },
+      "params": {
+        "fs": 128.0,
+        "treat_zero_as_nan": true,
+        "add_sec_col": true,
+        "reset_row_index": false,
+        "window_sec": 4,
+        "bands": [
+          [
+            0.5,
+            4,
+            "delta"
+          ],
+          [
+            4,
+            8,
+            "theta"
+          ],
+          [
+            8,
+            13,
+            "alpha"
+          ],
+          [
+            13,
+            30,
+            "beta"
+          ],
+          [
+            30,
+            47,
+            "gamma"
+          ]
+        ],
+        "main_band": [
+          0.5,
+          47.0
+        ],
+        "use_relative": true,
+        "use_log": true,
+        "min_coverage": 0.8,
+        "eps": 1e-12,
+        "bis_ffill_seconds": 1,
+        "sqi_threshold": 50,
+        "lag_seconds": 15
+      }
+    }
+  },
+  "data": {
+    "paths": {
+      "processed": "data/processed/v1",
+      "splits": "configs/data/splits.yaml"
+    },
+    "auto_split": {
+      "enable": true,
+      "train_ratio": 0.8,
+      "val_ratio": 0.1,
+      "test_ratio": 0.1,
+      "seed": 42
+    },
+    "cols": {
+      "bis": "BIS/BIS",
+      "sqi": "BIS/SQI",
+      "emg": "BIS/EMG",
+      "eeg": [
+        "BIS/EEG1_WAV",
+        "BIS/EEG2_WAV"
+      ],
+      "vital": [
+        "Solar8000/ART_SBP",
+        "Solar8000/ART_DBP",
+        "Solar8000/PLETH_HR",
+        "Solar8000/RR_CO2",
+        "Solar8000/BT"
+      ],
+      "drug": [
+        "Orchestra/PPF20_RATE"
+      ]
+    },
+    "window": {
+      "length": 60,
+      "hop": 4
+    },
+    "normalization": {
+      "enable": true,
+      "eps": 1e-06
+    },
+    "loader": {
+      "batch_size": 32,
+      "num_workers": 4,
+      "pin_memory": true,
+      "drop_last": false
+    }
+  },
+  "model": {
+    "name": "bis_regressor",
+    "input_dim": null,
+    "target_mode": "scalar",
+    "target_reduce": "last",
+    "encoder": {
+      "d_model": 128,
+      "n_layers": 4,
+      "n_head": 4,
+      "d_ff": 256,
+      "dropout": 0.1,
+      "pos_dropout": 0.0,
+      "max_len": 512
+    },
+    "head": {
+      "hidden_size": 128,
+      "pool": "mean"
+    }
+  },
+  "train": {
+    "epochs": 30,
+    "batch_size": 32,
+    "optimizer": {
+      "name": "sgd",
+      "lr": 0.0003,
+      "weight_decay": 0.01,
+      "momentum": 0.9,
+      "nesterov": true
+    },
+    "scheduler": {
+      "name": "cosine",
+      "epochs": 30,
+      "min_lr": 1e-06
+    },
+    "amp": true,
+    "patience": 8,
+    "grad_clip_norm": 1.0,
+    "ckpt": {
+      "dir": "outputs/checkpoints",
+      "last": "last.pth",
+      "best": "best.pth"
+    }
+  },
+  "mlflow": {
+    "tracking_uri": "file:./mlruns",
+    "experiment_name": "bis_transformer"
+  },
+  "predict": {
+    "case_dir": "data/processed/v1/cid_000123",
+    "output_dir": "outputs/predict"
+  },
+  "explain": {
+    "case_dir": "data/processed/v1/cid_000123",
+    "output_dir": "outputs/explain"
+  }
+}

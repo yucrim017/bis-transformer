@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/htky2413/Code/repos/bis-transformer/mlruns/751688686107808424/790350e265c24c59a5863bfda75a34ba/artifacts
+end_time: 1760059577229
+entry_point_name: ''
+experiment_id: '751688686107808424'
+lifecycle_stage: active
+run_id: 790350e265c24c59a5863bfda75a34ba
+run_name: angry-midge-770
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1760059555175
+status: 4
+tags: []
+user_id: unknown

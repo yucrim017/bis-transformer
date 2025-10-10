@@ -3,35 +3,41 @@ from __future__ import annotations
 from pathlib import Path
 import os
 import json
+
 import numpy as np
 import torch
 import hydra
 from omegaconf import DictConfig, OmegaConf
 
+from bistransformer.dataset import WindowConfig
 from bistransformer.models.factory import build_model
-from bistransformer.training.loop import _device
-from bistransformer.data.dataset import _load_npz_case, WindowConfig
+from bistransformer.eval import evaluate
+from bistransformer.utils.data import load_npz_case
 
-def _sliding_window(T, win, hop):
+def sliding_window(T, win, hop):
     return list(range(0, max(0, T - win + 1), hop))
 
 @hydra.main(version_base=None, config_path="../configs", config_name="config")
 def main(cfg: DictConfig):
-    device = _device()
+    device = torch.device(
+        "cuda" if torch.cuda.is_available() \
+        else "mps" if torch.backends.mps.is_available() \
+        else "cpu"
+    )
     model = build_model(cfg.model).to(device)
 
     ckpt_path = getattr(
-        cfg.train.ckpt, "path", None) or \
+        cfg.predict.model, "path", None) or \
         os.path.join(
             getattr(cfg.train.ckpt, "dir", "outputs/checkpoints"),
-            getattr(cfg.train.ckpt, "filename", "best.pt"),
+            getattr(cfg.train.ckpt, "last", "last.pt"),
         )
+
     sd = torch.load(ckpt_path, map_location=device)
     model.load_state_dict(sd)
     model.eval()
 
-    case_dir = Path(cfg.predict.case_dir)
-    data = _load_npz_case(case_dir)
+    data = load_npz_case(Path(cfg.predict.case_dir))
     X, sec = data["X"].astype("float32"), data["sec"].astype("float32")
     T = X.shape[1]
     win = int(cfg.predict.window.length)
@@ -41,7 +47,7 @@ def main(cfg: DictConfig):
     counts = np.zeros(T, dtype=np.int32)
 
     with torch.no_grad():
-        for st in _sliding_window(T, win, hop):
+        for st in sliding_window(T, win, hop):
             x = torch.from_numpy(X[:, st:st+win].T).unsqueeze(0).to(device)
             y = model(x).view(-1)
             if y.numel() == 1: # scalar head

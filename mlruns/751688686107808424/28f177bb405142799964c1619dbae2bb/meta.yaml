@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/htky2413/Code/repos/bis-transformer/mlruns/751688686107808424/28f177bb405142799964c1619dbae2bb/artifacts
+end_time: 1759899040756
+entry_point_name: ''
+experiment_id: '751688686107808424'
+lifecycle_stage: active
+run_id: 28f177bb405142799964c1619dbae2bb
+run_name: likeable-penguin-76
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1759899010411
+status: 4
+tags: []
+user_id: htky2413
