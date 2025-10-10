@@ -1,0 +1,24 @@
+epochs: 50
+batch_size: 64
+eval_interval: 5
+
+optimizer:
+  name: "sgd"
+  lr: 1e-3
+  weight_decay: 1e-2
+  momentum: 0.9
+  nesterov: true
+
+scheduler:
+  name: "cosine"
+  epochs: 30
+  min_lr: 1e-6
+
+amp: true
+patience: 8
+grad_clip_norm: 1.0
+
+ckpt:
+  dir: "outputs/checkpoints"
+  best: "best.pt"
+  last: "last.pt"

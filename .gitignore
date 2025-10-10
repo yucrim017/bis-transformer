@@ -1,0 +1,8 @@
+.venv/
+configs/**/test_**.yaml/
+notebooks/
+outputs/
+data/
+mlruns/
+test/
+**/__pycache__/
