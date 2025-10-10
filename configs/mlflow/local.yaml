@@ -1,0 +1,6 @@
+# MLflow Configuration for tracking and artifacts
+# Usage: python scripts/train.py mlflow=local
+
+experiment_name: "bis_transformer"
+tracking_uri: "file:./mlruns"
+artifact_location: "file:./mlruns"

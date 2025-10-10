@@ -1,0 +1,18 @@
+name: bis_regressor
+
+d_in: null
+max_len: null
+target_mode: "scalar"
+target_reduce: "last"
+
+encoder:
+  d_model: 256
+  attention_layers: 4
+  n_head: 8
+  d_ff: 256
+  dropout: 0.1
+  pos_dropout: 0.0
+
+head:
+  hidden_size: 128
+  pool: "mean"
