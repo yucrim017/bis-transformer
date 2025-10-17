@@ -18,8 +18,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Docker Image
         run: |
-          docker build --tag ghcr.io/$GITHUB_ACTOR/bis-transformer:latest \
-          --tag ghcr.io/$GITHUB_ACTOR/bis-transformer:$(echo $GITHUB_SHA | head -c7) \
+          docker build -f docker/mlflow-aws.Dockerfile \
+          -t ghcr.io/$GITHUB_ACTOR/bis-transformer:latest \
+          -t ghcr.io/$GITHUB_ACTOR/bis-transformer:$(echo $GITHUB_SHA | head -c7) \
           .
       - name: Push Docker Image
         run: |
