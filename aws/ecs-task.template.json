@@ -1,5 +1,5 @@
 {
-    "family": "mlflow-postgres-s3",
+    "family": "mlflow",
     "networkMode": "awsvpc",
     "requiresCompatibilities": ["FARGATE"],
     "cpu": "1024",
@@ -7,56 +7,6 @@
     "executionRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/ecsTaskExecutionRole",
     "taskRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/ecsTaskRole",
     "containerDefinitions": [
-        {
-            "name": "postgres-backend",
-            "image": "postgres:16",
-            "essential": true,
-            "portMappings": [
-                {
-                    "containerPort": "${PGPORT}",
-                    "protocol": "tcp"
-                }
-            ],
-            "environment": [
-                {
-                    "name": "POSTGRES_USER",
-                    "value": "${PGUSER}"
-                },
-                {
-                    "name": "POSTGRES_DB",
-                    "value": "${PGDB}"
-                },
-                {
-                    "name": "S3_BUCKET",
-                    "value": "${S3_BUCKET}"
-                },
-                {
-                    "name": "S3_BACKUP_KEY",
-                    "value": "${S3_BACKUP_KEY}"
-                }
-            ],
-            "secrets": [
-                {
-                    "name": "POSTGRES_PASSWORD",
-                    "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:postgres-password"
-                }
-            ],
-            "logConfiguration": {
-                "logDriver": "awslogs",
-                "options": {
-                    "awslogs-group": "/ecs/mlflow-postgres-s3",
-                    "awslogs-region": "${AWS_REGION}",
-                    "awslogs-stream-prefix": "postgres"
-                }
-            },
-            "healthCheck": {
-                "command": ["CMD-SHELL", "pg_isready -U mlflow || exit 1"],
-                "interval": 10,
-                "timeout": 5,
-                "retries": 3,
-                "startPeriod": 30
-            }
-        },
         {
             "name": "mlflow",
             "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/mlflow-aws:latest",
@@ -67,16 +17,10 @@
                     "protocol": "tcp"
                 }
             ],
-            "dependsOn": [
-                {
-                    "containerName": "postgres-backend",
-                    "condition": "HEALTHY"
-                }
-            ],
             "environment": [
                 {
                     "name": "MLFLOW_BACKEND_STORE_URI",
-                    "value": "postgresql://${PGUSER}:${PGPASSWORD}@localhost:${PGPORT}/${PGDB}"
+                    "value": "postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/${PGDB}"
                 },
                 {
                     "name": "MLFLOW_DEFAULT_ARTIFACT_ROOT",
@@ -86,7 +30,7 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/mlflow-postgres-s3",
+                    "awslogs-group": "/ecs/mlflow",
                     "awslogs-region": "${AWS_REGION}",
                     "awslogs-stream-prefix": "mlflow"
                 }

@@ -13,4 +13,7 @@ notebooks/
 outputs/
 test/
 
+terraform/.terraform*
+terraform/.terraform*/
+
 aws/ecs-task.json
