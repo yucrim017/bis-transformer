@@ -13,5 +13,4 @@ notebooks/
 outputs/
 test/
 
-aws/*.json
-!aws/*.template.json
+aws/ecs-task.json
