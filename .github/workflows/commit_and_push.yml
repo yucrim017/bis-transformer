@@ -19,10 +19,10 @@ jobs:
       - name: Build Docker Image
         run: |
           docker build -f docker/mlflow-aws.Dockerfile \
-          -t ghcr.io/$GITHUB_ACTOR/bis-transformer:latest \
-          -t ghcr.io/$GITHUB_ACTOR/bis-transformer:$(echo $GITHUB_SHA | head -c7) \
+          -t ghcr.io/$GITHUB_ACTOR/mlflow-aws:latest \
+          -t ghcr.io/$GITHUB_ACTOR/mlflow-aws:$(echo $GITHUB_SHA | head -c7) \
           .
       - name: Push Docker Image
         run: |
-          docker push ghcr.io/$GITHUB_ACTOR/bis-transformer:latest
-          docker push ghcr.io/$GITHUB_ACTOR/bis-transformer:$(echo $GITHUB_SHA | head -c7)
+          docker push ghcr.io/$GITHUB_ACTOR/mlflow-aws:latest
+          docker push ghcr.io/$GITHUB_ACTOR/mlflow-aws:$(echo $GITHUB_SHA | head -c7)
