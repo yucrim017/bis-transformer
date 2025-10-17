@@ -1,46 +1,26 @@
-# M1 Pro MPS対応 Python 3.10環境
-FROM --platform=linux/arm64 python:3.10-slim
+# CUDA-compatible Python 3.9 environment
+FROM --platform=linux/amd64 python:3.9
 
-# 作業ディレクトリの設定
-WORKDIR /app
+WORKDIR /opt/ml/code
 
-# システムパッケージの更新とインストール
-RUN apt-get update && apt-get install -y \
-    build-essential \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
-    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Pythonパッケージのインストール
-RUN pip install --no-cache-dir --upgrade pip
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
-# 基本的な科学計算ライブラリ
-RUN pip install --no-cache-dir \
-    numpy \
-    pandas \
-    scipy \
-    matplotlib \
-    seaborn \
-    tqdm \
-    scikit-learn \
-    jupyter \
-    ipython
+COPY requirements.txt /opt/ml/code/requirements.txt
+RUN pip install --no-cache-dir -r /opt/ml/code/requirements.txt
 
-# PyTorch (MPS対応版 - Apple Siliconで動作)
-RUN pip install --no-cache-dir \
-    torch \
-    torchvision \
-    torchaudio
+COPY bis-transformer/src /opt/ml/code/src
+COPY bis-transformer/configs /opt/ml/code/configs
+COPY bis-transformer/pyproject.toml /opt/ml/code/pyproject.toml
 
-# その他の機械学習・深層学習ライブラリ
-RUN pip install --no-cache-dir \
-    transformers \
-    datasets \
-    tensorboard \
-    wandb
+RUN pip install --no-cache-dir -e /opt/ml/code
 
-# 作業ディレクトリをマウントポイントとして設定
-VOLUME /app
+COPY train_sagemaker.py /opt/ml/code/train_sagemaker.py
 
-# デフォルトコマンド
-CMD ["/bin/bash"]
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/opt/ml/code:$PYTHONPATH
+
+ENV SAGEMAKER_PROGRAM=train_sagemaker.py

@@ -1,0 +1,77 @@
+# SageMaker Training Configuration
+
+# ECR Settings
+ecr:
+  repository_name: bis-transformer
+  image_tag: latest
+
+# SageMaker Training Job Settings
+training:
+  instance_type: ml.g4dn.xlarge # GPU instance (T4)
+  # Available instance types:
+  # - ml.p3.2xlarge(T4): 1x V100 GPU, 8 vCPUs, 61 GB RAM
+  # - ml.p3.8xlarge(T4): 4x V100 GPU, 32 vCPUs, 244 GB RAM
+  # - ml.p3.16xlarge(T4): 8x V100 GPU, 64 vCPUs, 488 GB RAM
+  # - ml.g4dn.xlarge(T4): 1x T4 GPU, 4 vCPUs, 16 GB RAM (Low cost)
+  # - ml.g4dn.12xlarge(T4): 4x T4 GPU, 48 vCPUs, 192 GB RAM
+  
+  instance_count: 1
+  volume_size: 50  # 50 GB
+  max_run: 86400  # 24 hours
+  base_job_name: bis-transformer
+
+# Data Settings
+data:
+  # Change the S3 paths to your actual values
+  training_data: s3://bis-transformer/data/processed/v1
+  validation_data: s3://bis-transformer/data/processed/v1
+  output_path: s3://bis-transformer/output/v1
+
+# MLflow Settings
+mlflow:
+  tracking_uri: http://<mlflow-public-ip>:5000
+  experiment_name: bis-transformer-sagemaker
+
+# Hyperparameters
+hyperparameters:
+  # Training
+  train.epochs: 50
+  train.optimizer.name: sgd
+  train.optimizer.lr: 0.001
+  train.optimizer.weight_decay: 0.01
+  train.optimizer.momentum: 0.9
+  train.optimizer.nesterov: true
+  train.scheduler.name: cosine
+  train.scheduler.epochs: 30
+  train.scheduler.min_lr: 0.000001
+  train.amp: true
+  train.patience: 8
+  train.grad_clip_norm: 1.0
+  train.eval_interval: 5
+  
+  # Data
+  data.loader.batch_size: 64
+  data.loader.num_workers: 4
+  data.loader.pin_memory: true
+  data.loader.drop_last: false
+  data.window.length: 120
+  data.window.hop: 4
+  data.normalization.enable: true
+  data.normalization.eps: 0.000001
+  
+  # Model
+  model.encoder.d_model: 256
+  model.encoder.attention_layers: 4
+  model.encoder.n_head: 8
+  model.encoder.d_ff: 256
+  model.encoder.dropout: 0.1
+  model.encoder.pos_dropout: 0.0
+  model.head.hidden_size: 128
+  model.head.pool: mean
+
+# Tags
+tags:
+  Project: BIS-Transformer
+  Environment: SageMaker
+  ManagedBy: AWS
+

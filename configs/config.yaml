@@ -1,9 +1,8 @@
 defaults:
-  - prepare: config
   - data: base
   - model: transformer
   - train: base
-  - mlflow: local
+  - mlflow: config
   - _self_
 
 predict:
