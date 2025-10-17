@@ -1,7 +1,7 @@
 # CUDA-compatible Python 3.9 environment
 FROM --platform=linux/amd64 python:3.9
 
-WORKDIR /app
+WORKDIR /opt/ml/code
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
@@ -9,30 +9,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
-RUN git clone https://github.com/yucrim01/bis-transformer.git /app
+COPY requirements.txt /opt/ml/code/requirements.txt
+RUN pip install --no-cache-dir -r /opt/ml/code/requirements.txt
 
-COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r /app/requirements.txt
-RUN pip install --no-cache-dir -e /app
+COPY bis-transformer/src /opt/ml/code/src
+COPY bis-transformer/configs /opt/ml/code/configs
+COPY bis-transformer/pyproject.toml /opt/ml/code/pyproject.toml
 
-CMD ["sh", "-c", \
-    "aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID} && \
-    aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY} && \
-    aws configure set region ${AWS_REGION} && \
-    aws configure set output json && \
-    echo 'PGPASSWORD=${PGPASSWORD}' >> app/.env && \
-    echo 'PGUSER=${PGUSER}' >> app/.env && \
-    echo 'PGHOST=${PGHOST}' >> app/.env && \
-    echo 'PGPORT=${PGPORT}' >> app/.env && \
-    echo 'PGDB=${PGDB}' >> app/.env && \
-    echo 'PGPASSWORD_SECRET_NAME=${PGPASSWORD_SECRET_NAME}' >> app/.env && \
-    echo 'MLFLOW_PORT=${MLFLOW_PORT}' >> app/.env && \
-    echo 'AWS_PROFILE=${AWS_PROFILE}' >> app/.env && \
-    echo 'AWS_REGION=${AWS_REGION}' >> app/.env && \
-    echo 'AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}' >> app/.env && \
-    echo 'S3_BUCKET=${S3_BUCKET}' >> app/.env && \
-    echo 'ECS_TASK_CPU=${ECS_TASK_CPU}' >> app/.env && \
-    echo 'ECS_TASK_MEMORY=${ECS_TASK_MEMORY}' >> app/.env && \
-    echo 'S3_ARTIFACTS_KEY=${S3_ARTIFACTS_KEY}' >> app/.env && \
-    echo 'ECS_TASK_CPU=${ECS_TASK_CPU}' >> app/.env && \
-    echo 'ECS_TASK_MEMORY=${ECS_TASK_MEMORY}'"]
+RUN pip install --no-cache-dir -e /opt/ml/code
+
+COPY train_sagemaker.py /opt/ml/code/train_sagemaker.py
+
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/opt/ml/code:$PYTHONPATH
+
+ENV SAGEMAKER_PROGRAM=train_sagemaker.py
