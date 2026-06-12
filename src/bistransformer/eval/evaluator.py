@@ -30,7 +30,7 @@ def evaluate(
     """
     device = device
     model.eval()
-    m_mae = m_rmse = m_pear = 0.0
+    preds, targets = [], []
 
     with torch.no_grad():
         for batch in loader:
@@ -38,8 +38,10 @@ def evaluate(
                 v.to(device, non_blocking=True) if hasattr(v, "to") \
                 else v for k, v in batch.items()}
             pred, y = _single_inference(model, batch, amp, device)
-            m_mae += mae(pred, y)
-            m_rmse += rmse(pred, y)
-            m_pear += pearson(pred, y)
-    
-    return m_mae / len(loader), m_rmse / len(loader), m_pear / len(loader)
+            preds.append(pred)
+            targets.append(y)
+
+    preds = torch.cat(preds)
+    targets = torch.cat(targets)
+
+    return mae(preds, targets), rmse(preds, targets), pearson(preds, targets)

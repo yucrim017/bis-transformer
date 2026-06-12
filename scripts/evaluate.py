@@ -13,8 +13,6 @@ from bistransformer.eval import evaluate
 def main(cfg: DictConfig):
     mlflow.set_tracking_uri(cfg.mlflow.tracking_uri)
     mlflow.set_experiment(cfg.mlflow.experiment_name)
-    mlflow.set_tag("mode", "evaluate")
-    mlflow.set_tag("train", mlflow.active_run().info.run_id)
 
     device = torch.device(
         "cuda" if torch.cuda.is_available() \
@@ -23,30 +21,43 @@ def main(cfg: DictConfig):
     )
 
     _, _, test_loader = build_dataloaders(cfg)
+
+    first_batch = next(iter(test_loader))
+    OmegaConf.set_struct(cfg.model, False)
+    cfg.model.d_in = first_batch["inputs"].shape[-1]
+    cfg.model.max_len = first_batch["inputs"].shape[1]
+    OmegaConf.set_struct(cfg.model, True)
+
     model = build_model(cfg.model).to(device)
 
-    ckpt_path = getattr(
-        cfg.train.ckpt, "path", None) or \
-        os.path.join(
-            getattr(cfg.train.ckpt, "dir", "outputs/checkpoints"),
-            getattr(cfg.train.ckpt, "filename", "best.pt"),
-        )
-    sd = torch.load(ckpt_path, map_location=device)
-    model.load_state_dict(sd)
+    ckpt_path = os.path.join(
+        getattr(cfg.train.ckpt, "dir", "outputs/checkpoints"),
+        getattr(cfg.train.ckpt, "best", "best.pt"),
+    )
+    ckpt = torch.load(ckpt_path, map_location=device, weights_only=False)
+    model.load_state_dict(ckpt["model"], strict=False)
 
-    with mlflow.start_run() as run:
-        mlflow.log_dict(OmegaConf.to_container(cfg, resolve=True), "config")
+    run_id = getattr(cfg.evaluate, "run_id", None)
 
-        metrics = _eval_epoch(
+    with mlflow.start_run(run_id=run_id) as run:
+        if run_id is None:
+            # standalone evaluation run: tag mode and keep config for reference
+            mlflow.set_tag("mode", "evaluate")
+            mlflow.log_dict(OmegaConf.to_container(cfg, resolve=True), "config")
+
+        test_mae, test_rmse, test_pearson = evaluate(
             model,
             test_loader,
             device,
             amp=bool(getattr(cfg.train, "amp", True))
         )
+        metrics = {"MAE": test_mae, "RMSE": test_rmse, "Pearson": test_pearson}
         for k, v in metrics.items():
-            mlflow.log_metric(k, float(v))
-            
-        mlflow.log_artifact(ckpt_path, artifact_path="checkpoints")
+            mlflow.log_metric(f"Test/{k}", float(v))
+
+        if run_id is None:
+            # no source training run to reference: keep a copy of the checkpoint
+            mlflow.log_artifact(ckpt_path, artifact_path="checkpoints")
 
     print("[test]", {k: round(v, 6) for k, v in metrics.items()})
 

@@ -1,10 +1,10 @@
 epochs: 50
-batch_size: 64
+batch_size: 32
 eval_interval: 5
 
 optimizer:
-  name: "sgd"
-  lr: 1e-3
+  name: "adamw"
+  lr: 1e-4
   weight_decay: 1e-2
   momentum: 0.9
   nesterov: true
@@ -17,6 +17,11 @@ scheduler:
 amp: true
 patience: 8
 grad_clip_norm: 1.0
+
+loss:
+  # extra weight on timesteps where |dBIS/dt| is large (sequence target_mode only)
+  # weight = 1 + variation_weight * |dy/dt|; 0 = plain MSE
+  variation_weight: 5.0
 
 ckpt:
   dir: "outputs/checkpoints"

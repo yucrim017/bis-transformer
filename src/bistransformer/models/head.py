@@ -15,7 +15,6 @@ class RegressionHead(nn.Module):
         self.target_mode = target_mode
         self.pool = pool
         self.dropout = nn.Dropout(dropout)
-        self.norm = nn.LayerNorm(d_model)
         self.fc = nn.Linear(d_model, hidden_size)
         self.act = nn.GELU()
         self.fc2 = nn.Linear(hidden_size, 1)
@@ -31,6 +30,8 @@ class RegressionHead(nn.Module):
                 x = x.max(dim=1)[0]
             elif self.pool == 'cls':
                 x = x[:, 0, :]
+            elif self.pool == 'last':
+                x = x[:, -1, :]
             else:
                 raise ValueError(f"Invalid pool type: {self.pool}")
         elif self.target_mode == "sequence":

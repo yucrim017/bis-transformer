@@ -2,7 +2,7 @@ name: bis_regressor
 
 d_in: null
 max_len: null
-target_mode: "scalar"
+target_mode: "sequence"
 target_reduce: "last"
 
 encoder:
@@ -15,4 +15,4 @@ encoder:
 
 head:
   hidden_size: 128
-  pool: "mean"
+  pool: "last"

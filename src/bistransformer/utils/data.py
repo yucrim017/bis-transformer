@@ -85,6 +85,19 @@ def load_npz_case(case_dir: Path) -> Dict[str, Any]:
     )
 
 
+def find_case_dir(base_dir: Path, d_in: int) -> Path:
+    """find first case under base_dir whose feature count matches d_in"""
+    for c in sorted(Path(base_dir).iterdir()):
+        if not c.is_dir():
+            continue
+        try:
+            data = load_npz_case(c)
+        except Exception:
+            continue
+        if data["X"].shape[0] == d_in:
+            return c
+    raise FileNotFoundError(f"No case with {d_in} features found under {base_dir}")
+
 def reindex_bis_and_trim_head(
     df: pd.DataFrame,
     **kwargs

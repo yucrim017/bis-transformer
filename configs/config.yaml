@@ -6,9 +6,13 @@ defaults:
   - mlflow: local
   - _self_
 
+evaluate:
+  run_id: null  # set to a training run_id to log Test metrics into that run
+
 predict:
+  run_id: null  # set to a training run_id to log predict results into that run
   model:
-    path: "outputs/checkpoints/best.pt"
+    path: null
   window:
     length: 120
     hop: 4
@@ -16,6 +20,7 @@ predict:
   output_dir: "outputs/predict"
 
 explain:
+  run_id: null  # set to a training run_id to log explain results into that run
   model:
     path: null
   window:

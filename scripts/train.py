@@ -60,6 +60,8 @@ def train_one_experiment(cfg: DictConfig):
 
     grad_clip_norm = cfg.train.grad_clip_norm
     amp = cfg.train.amp
+    variation_weight = float(getattr(cfg.train.loss, "variation_weight", 0.0)) \
+        if hasattr(cfg.train, "loss") else 0.0
 
     # build optimizer and scheduler
     optimizer = build_optimizer(model, cfg)
@@ -94,11 +96,40 @@ def train_one_experiment(cfg: DictConfig):
     last_ckpt_path = None
     val_metrics = {"MAE": float("inf"), "RMSE": float("inf"), "Pearson": 0.0}
 
+    start_epoch = 1
+    last_ckpt_path_existing = last_ckpt_saver.ckpt_path
+    if os.path.exists(last_ckpt_path_existing):
+        log.info(f"Resuming from checkpoint: {last_ckpt_path_existing}")
+        ckpt = torch.load(last_ckpt_path_existing, map_location=device, weights_only=False)
+
+        model.load_state_dict(ckpt["model"])
+        optimizer.load_state_dict(ckpt["optimizer"])
+        if scheduler is not None and ckpt.get("scheduler") is not None:
+            scheduler.load_state_dict(ckpt["scheduler"])
+        if scaler is not None and ckpt.get("scaler") is not None:
+            scaler.load_state_dict(ckpt["scaler"])
+
+        early.best = ckpt["early"]["best"]
+        early.count = ckpt["early"]["count"]
+
+        rng = ckpt.get("rng", {})
+        if rng.get("torch") is not None:
+            torch.set_rng_state(rng["torch"])
+        if rng.get("cuda") is not None and torch.cuda.is_available():
+            torch.cuda.set_rng_state_all([s for s in rng["cuda"]])
+        if rng.get("python") is not None:
+            random.setstate(rng["python"])
+        if rng.get("numpy") is not None:
+            np.random.set_state(rng["numpy"])
+
+        start_epoch = ckpt["epoch"] + 1
+        log.info(f"Resumed at epoch {start_epoch} (early.best={early.best:.6f}, early.count={early.count})")
+
     start_run_time = time.time()
 
     log.info("Start Training ...")
 
-    for epoch in range(1, epochs + 1):
+    for epoch in range(start_epoch, epochs + 1):
         start_epoch_time = time.time()
 
         model.train()
@@ -109,7 +140,8 @@ def train_one_experiment(cfg: DictConfig):
             scaler,
             amp,
             grad_clip_norm,
-            device
+            device,
+            variation_weight
         )
         epoch_time = time.time() - start_epoch_time
         
@@ -184,9 +216,8 @@ def train_one_experiment(cfg: DictConfig):
             break
     
     if best_ckpt_path and os.path.exists(best_ckpt_path):
-        model.load_state_dict(
-            torch.load(best_ckpt_path, map_location=device, weights_only=True)
-        )
+        best_ckpt = torch.load(best_ckpt_path, map_location=device, weights_only=False)
+        model.load_state_dict(best_ckpt["model"])
 
     return {
         "mae_best": early.best,
@@ -238,6 +269,8 @@ def main(cfg: DictConfig):
             "train.grad_clip": cfg.train.grad_clip_norm,
             "train.patience": cfg.train.patience,
             "train.amp": cfg.train.amp,
+            "train.loss.variation_weight": float(getattr(cfg.train.loss, "variation_weight", 0.0)) \
+                if hasattr(cfg.train, "loss") else 0.0,
             
             # Data params
             "data.window.length": cfg.data.window.length,
@@ -253,16 +286,18 @@ def main(cfg: DictConfig):
         mlflow.log_metric("num_params", n_params)
 
         if result.get("best_ckpt_path"):
-            # save best checkpoint as PyTorch model
-            mlflow.pytorch.log_model(
-                python_model=result["model"],
-                artifact_path="model",
-                registered_model_name="bis_transformer"
-            )
-
             # save checkpoint file as light weight for inference
             mlflow.log_artifact(result["best_ckpt_path"], "checkpoints")
-        
+
+            # save best checkpoint as PyTorch model
+            try:
+                mlflow.pytorch.log_model(
+                    pytorch_model=result["model"],
+                    artifact_path="model",
+                )
+            except Exception as e:
+                log.warning(f"Failed to log PyTorch model to MLflow: {e}")
+
             # remove best checkpoint file after logged
             os.remove(result["best_ckpt_path"])
 
