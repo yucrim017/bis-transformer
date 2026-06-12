@@ -52,6 +52,12 @@ def main(cfg: DictConfig):
 
     data = load_npz_case(case_dir)
     X, sec = data["X"].astype("float32"), data["sec"].astype("float32")
+
+    if bool(getattr(cfg.data.normalization, "enable", False)):
+        mu = X.mean(axis=1, keepdims=True)
+        std = X.std(axis=1, keepdims=True) + float(getattr(cfg.data.normalization, "eps", 1e-6))
+        X = (X - mu) / std
+
     T = X.shape[1]
     win = int(cfg.predict.window.length)
     hop = int(cfg.predict.window.hop)
